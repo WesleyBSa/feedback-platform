@@ -16,6 +16,6 @@ func RegisterRoutes(e *echo.Echo) {
 	// Rotas para administração
 	adminGroup := e.Group("/admin")
 	adminGroup.GET("/feedbacks", controllers.GetFeedbacks)
-	adminGroup.PUT("/feedbacks/:id", controllers.UpdateFeedback)
 	adminGroup.DELETE("/feedbacks/:id", controllers.DeleteFeedback)
+	adminGroup.GET("/report", controllers.GenerateReport)
 }

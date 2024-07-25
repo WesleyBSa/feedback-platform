@@ -1,13 +1,30 @@
+// controllers/feedback.go
 package controllers
 
 import (
+	"bytes"
 	"feedback-platform/models"
 	"net/http"
 
+	"github.com/jung-kurt/gofpdf"
 	"github.com/labstack/echo/v4"
 )
 
-// GetFeedbacks retorna todos os feedbacks
+// CreateFeedback creates a new feedback entry
+func CreateFeedback(c echo.Context) error {
+	feedback := new(models.Feedback)
+	if err := c.Bind(feedback); err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	if result := models.DB.Create(feedback); result.Error != nil {
+		return c.JSON(http.StatusInternalServerError, result.Error.Error())
+	}
+
+	return c.JSON(http.StatusCreated, feedback)
+}
+
+// GetFeedbacks retrieves all feedback entries
 func GetFeedbacks(c echo.Context) error {
 	var feedbacks []models.Feedback
 	if result := models.DB.Find(&feedbacks); result.Error != nil {
@@ -16,41 +33,43 @@ func GetFeedbacks(c echo.Context) error {
 	return c.JSON(http.StatusOK, feedbacks)
 }
 
-// CreateFeedback cria um novo feedback
-func CreateFeedback(c echo.Context) error {
-	feedback := new(models.Feedback)
-	if err := c.Bind(feedback); err != nil {
-		return err
-	}
-	if result := models.DB.Create(feedback); result.Error != nil {
-		return c.JSON(http.StatusInternalServerError, result.Error.Error())
-	}
-	return c.JSON(http.StatusCreated, feedback)
-}
-
-// UpdateFeedback atualiza um feedback existente
-func UpdateFeedback(c echo.Context) error {
-	id := c.Param("id")
-	var feedback models.Feedback
-	if result := models.DB.First(&feedback, id); result.Error != nil {
-		return c.JSON(http.StatusNotFound, result.Error.Error())
-	}
-
-	if err := c.Bind(&feedback); err != nil {
-		return err
-	}
-
-	if result := models.DB.Save(&feedback); result.Error != nil {
-		return c.JSON(http.StatusInternalServerError, result.Error.Error())
-	}
-	return c.JSON(http.StatusOK, feedback)
-}
-
-// DeleteFeedback exclui um feedback existente
+// DeleteFeedback deletes a feedback entry by ID
 func DeleteFeedback(c echo.Context) error {
 	id := c.Param("id")
 	if result := models.DB.Delete(&models.Feedback{}, id); result.Error != nil {
 		return c.JSON(http.StatusInternalServerError, result.Error.Error())
 	}
 	return c.NoContent(http.StatusNoContent)
+}
+
+// GenerateReport generates a PDF report of feedbacks
+func GenerateReport(c echo.Context) error {
+	var feedbacks []models.Feedback
+	if result := models.DB.Find(&feedbacks); result.Error != nil {
+		return c.JSON(http.StatusInternalServerError, result.Error.Error())
+	}
+
+	pdf := gofpdf.New("P", "mm", "A4", "")
+	pdf.AddPage()
+	pdf.SetFont("Arial", "B", 16)
+	pdf.Cell(40, 10, "Feedback Report")
+	pdf.Ln(12)
+	pdf.SetFont("Arial", "", 12)
+
+	for _, feedback := range feedbacks {
+		pdf.Cell(0, 10, "User: "+feedback.User)
+		pdf.Ln(6)
+		pdf.MultiCell(0, 10, "Content: "+feedback.Content, "", "", false)
+		pdf.Ln(6)
+	}
+
+	// Generate PDF as byte slice
+	var pdfBuffer bytes.Buffer
+	err := pdf.Output(&pdfBuffer)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	// Return PDF directly to client as attachment
+	return c.Blob(http.StatusOK, "application/pdf", pdfBuffer.Bytes())
 }

@@ -76,7 +76,7 @@ h1 {
 }
 
 .feedback-item button {
-    background-color: #0275d8;
+    background-color: #d80202;
     color: white;
     border: none;
     padding: 5px 10px;
@@ -86,7 +86,7 @@ h1 {
 }
 
 .feedback-item button:hover {
-    background-color: #025aa5;
+    background-color: #f82525;
 }
 
 .feedback-item button.delete {
@@ -95,4 +95,19 @@ h1 {
 
 .feedback-item button.delete:hover {
     background-color: #c9302c;
+}
+
+#generate-report {
+    margin-left: 220px;
+    background-color: #f78402;
+    color: white;
+    border: none;
+    padding: 8px 10px;
+    margin-right: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#generate-report:hover {
+    background-color: #db7623;
 }

@@ -7,32 +7,33 @@ document.addEventListener("DOMContentLoaded", function() {
             feedbackList.innerHTML = feedbacks.map(feedback => `
                 <div class="feedback-item" data-id="${feedback.ID}">
                     <p><strong>${feedback.User || "Unknown User"}</strong>: ${feedback.Content || "No content"}</p>
-                    <button onclick="editFeedback(${feedback.ID})">Edit</button>
-                    <button class="delete" onclick="deleteFeedback(${feedback.ID})">Delete</button>
+                    <button onclick="deleteFeedback(${feedback.ID})">Delete</button>
                 </div>
             `).join("");
         })
         .catch(error => console.error("Error fetching feedbacks:", error));
-});
 
-function editFeedback(id) {
-    const content = prompt("Enter new content:");
-    if (content) {
-        fetch(`/admin/feedbacks/${id}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ content })
-        })
-        .then(response => response.json())
-        .then(updatedFeedback => {
-            const feedbackItem = document.querySelector(`.feedback-item[data-id="${id}"] p`);
-            feedbackItem.innerHTML = `<strong>${updatedFeedback.User || "Unknown User"}</strong>: ${updatedFeedback.Content || "No content"}`;
-        })
-        .catch(error => console.error("Error editing feedback:", error));
-    }
-}
+    document.getElementById("generate-report").addEventListener("click", function() {
+        fetch("/admin/report")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.style.display = "none";
+                a.href = url;
+                a.download = "feedback_report.pdf";
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => console.error("Error generating report:", error));
+    });
+});
 
 function deleteFeedback(id) {
     fetch(`/admin/feedbacks/${id}`, {
