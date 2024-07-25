@@ -2,11 +2,11 @@ document.addEventListener("DOMContentLoaded", function() {
     fetch("/admin/feedbacks")
         .then(response => response.json())
         .then(feedbacks => {
-            console.log(feedbacks);  // Adicione este log para verificar a estrutura dos dados
+            console.log(feedbacks); 
             const feedbackList = document.getElementById("feedback-list");
             feedbackList.innerHTML = feedbacks.map(feedback => `
                 <div class="feedback-item" data-id="${feedback.ID}">
-                    <p><strong>${feedback.User || "Unknown User"}</strong>: ${feedback.Content || "No content"}</p>
+                    <p><strong>${feedback.user || "Unknown User"}</strong>: ${feedback.content || "No content"}</p>
                     <button onclick="deleteFeedback(${feedback.ID})">Delete</button>
                 </div>
             `).join("");
