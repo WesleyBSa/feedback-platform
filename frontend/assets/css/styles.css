@@ -1,4 +1,4 @@
-/* Estilos Gerais */
+/* All */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -12,7 +12,7 @@ h1 {
     margin-top: 20px;
 }
 
-/* Estilos do Formulário */
+/* Form */
 #feedback-form {
     max-width: 600px;
     margin: 20px auto;
@@ -29,7 +29,8 @@ h1 {
 }
 
 #feedback-form input, 
-#feedback-form textarea {
+#feedback-form textarea,
+#feedback-form select {
     width: 100%;
     padding: 10px;
     margin-bottom: 15px;
@@ -50,7 +51,7 @@ h1 {
     background-color: #4cae4c;
 }
 
-/* Estilos Gerais para Admin */
+/* Admin */
 #feedback-list {
     max-width: 900px;
     margin: 20px auto;
@@ -76,7 +77,7 @@ h1 {
 }
 
 .feedback-item button {
-    background-color: #d80202;
+    background-color: #b8041c;
     color: white;
     border: none;
     padding: 5px 10px;
@@ -86,28 +87,21 @@ h1 {
 }
 
 .feedback-item button:hover {
-    background-color: #f82525;
-}
-
-.feedback-item button.delete {
-    background-color: #d9534f;
-}
-
-.feedback-item button.delete:hover {
-    background-color: #c9302c;
+    background-color: #ce0819;
 }
 
 #generate-report {
-    margin-left: 220px;
-    background-color: #f78402;
-    color: white;
+    font-size: 14px;
+    text-transform: uppercase;
+    background-color: #e2be1a;
+    color: rgb(7, 1, 1);
     border: none;
-    padding: 8px 10px;
-    margin-right: 5px;
+    padding: 5px 10px;
+    margin-left: 215px;
     border-radius: 4px;
     cursor: pointer;
 }
 
 #generate-report:hover {
-    background-color: #db7623;
+    background-color: #f7d027;
 }

@@ -1,10 +1,9 @@
-// controllers/feedback.go
 package controllers
 
 import (
-	"bytes"
 	"feedback-platform/models"
 	"net/http"
+	"strconv"
 
 	"github.com/jung-kurt/gofpdf"
 	"github.com/labstack/echo/v4"
@@ -57,19 +56,19 @@ func GenerateReport(c echo.Context) error {
 	pdf.SetFont("Arial", "", 12)
 
 	for _, feedback := range feedbacks {
-		pdf.Cell(0, 10, "User: "+feedback.User)
+		pdf.Cell(40, 10, "User: "+feedback.User)
+		pdf.Ln(6)
+		pdf.Cell(40, 10, "Rating: "+strconv.Itoa(feedback.Rating)) // Use strconv.Itoa to convert the integer to string
 		pdf.Ln(6)
 		pdf.MultiCell(0, 10, "Content: "+feedback.Content, "", "", false)
 		pdf.Ln(6)
 	}
 
-	// Generate PDF as byte slice
-	var pdfBuffer bytes.Buffer
-	err := pdf.Output(&pdfBuffer)
+	filePath := "feedback_report.pdf"
+	err := pdf.OutputFileAndClose(filePath)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	// Return PDF directly to client as attachment
-	return c.Blob(http.StatusOK, "application/pdf", pdfBuffer.Bytes())
+	return c.Attachment(filePath, "feedback_report.pdf")
 }

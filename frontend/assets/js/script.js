@@ -3,13 +3,14 @@ document.getElementById('feedback-form').addEventListener('submit', function(eve
 
     const user = document.getElementById('user').value;
     const content = document.getElementById('content').value;
+    const rating = document.getElementById('rating').value;
 
     fetch('/feedbacks', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ user, content })
+        body: JSON.stringify({ user, content, rating })
     })
     .then(response => response.json())
     .then(data => {

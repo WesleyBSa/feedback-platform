@@ -6,16 +6,10 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// RegisterRoutes registers all the routes
 func RegisterRoutes(e *echo.Echo) {
-	// Rotas para a aplicação pública
-	e.Static("/", "frontend")
-
-	// Rotas para feedbacks (público)
 	e.POST("/feedbacks", controllers.CreateFeedback)
-
-	// Rotas para administração
-	adminGroup := e.Group("/admin")
-	adminGroup.GET("/feedbacks", controllers.GetFeedbacks)
-	adminGroup.DELETE("/feedbacks/:id", controllers.DeleteFeedback)
-	adminGroup.GET("/report", controllers.GenerateReport)
+	e.GET("/admin/feedbacks", controllers.GetFeedbacks)
+	e.DELETE("/admin/feedbacks/:id", controllers.DeleteFeedback)
+	e.GET("/admin/report", controllers.GenerateReport)
 }
