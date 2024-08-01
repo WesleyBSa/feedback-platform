@@ -19,7 +19,7 @@
 
 - **Administrators** can:
   - View all feedback.
-  - Edit feedback.
+  - Filter feedback by rating.
   - Delete feedback.
 
 ## Technologies Used
@@ -53,7 +53,7 @@
 │   │   │   └── styles.css
 │   │   └── js
 │   │       ├── admin.js
-│   │       └── script.js
+│   │       └── feedback.js
 │   ├── admin.html
 │   └── index.html
 ├── models
@@ -77,7 +77,7 @@
 1. Clone the repository:
 
 ```sh
-git clone https://github.com/your-username/feedback-platform.git
+git clone https://github.com/WesleyBSa/feedback-platform.git
 cd feedback-platform
 ```
 
@@ -109,7 +109,7 @@ On the main page, fill out the form with your name and feedback, and click "Subm
 
 ### Managing Feedback
 
-On the admin page, you can view, edit, and delete feedback.
+On the admin page, you can view feedback, filter feedback by rating, and delete feedback.
 
 ## Testing the API
 
@@ -117,8 +117,19 @@ Use Postman to test the API routes. Here are the available routes:
 
 - `POST /feedbacks`: Creates new feedback.
 - `GET /admin/feedbacks`: Returns all feedback.
-- `PUT /admin/feedbacks/:id`: Updates existing feedback.
+- `GET /admin/feedbacks?rating=<rating>`: Returns feedback filtered by rating.
 - `DELETE /admin/feedbacks/:id`: Deletes existing feedback.
+
+## Screenshots
+
+### Index Page
+
+![Index Page](screenshots/index-screenshot.png)
+
+### Admin Page
+
+![Admin Page](screenshots/admin-screenshot.png)
+
 
 ## Contribution
 
@@ -133,5 +144,4 @@ Feel free to contribute to this project. To do so, follow the steps below:
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
-
----
+```
