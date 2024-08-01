@@ -1,22 +1,35 @@
-document.getElementById('feedback-form').addEventListener('submit', function(event) {
-    event.preventDefault();
+document.getElementById('feedback-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
 
     const user = document.getElementById('user').value;
     const content = document.getElementById('content').value;
-    const rating = document.getElementById('rating').value;
+    const ratingInput = document.querySelector('input[name="rating"]:checked');
+    
+    if (!ratingInput) {
+        alert('Please select a rating');
+        return;
+    }
 
-    fetch('/feedbacks', {
+    const rating = ratingInput.value;
+
+    const feedback = {
+        user,
+        content,
+        rating: parseInt(rating)
+    };
+
+    const response = await fetch('/feedbacks', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ user, content, rating })
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Feedback submitted:', data);
-        alert('Thank you for your feedback!');
+        body: JSON.stringify(feedback)
+    });
+
+    if (response.ok) {
+        alert('Feedback submitted successfully');
         document.getElementById('feedback-form').reset();
-    })
-    .catch(error => console.error('Error:', error));
+    } else {
+        alert('Failed to submit feedback');
+    }
 });
