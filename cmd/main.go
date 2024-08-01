@@ -16,10 +16,8 @@ func main() {
 	models.ConnectDB()
 	routes.RegisterRoutes(e)
 
-	// Rota para servir o frontend
 	e.Static("/", "frontend")
 
-	// Rota para servir a página do admin
 	e.File("/admin", "frontend/admin.html")
 
 	e.Logger.Fatal(e.Start(":1313"))

@@ -1,29 +1,28 @@
-document.getElementById("feedback-form").addEventListener("submit", function(event) {
-    event.preventDefault();
+document.getElementById('feedback-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-    const formData = new FormData(this);
-    const data = {
-        user: formData.get("user"),
-        content: formData.get("content"),
-        rating: parseInt(formData.get("rating"), 10)
+    const user = document.getElementById('user').value;
+    const content = document.getElementById('content').value;
+    const rating = document.querySelector('input[name="rating"]:checked').value;
+
+    const feedback = {
+        user,
+        content,
+        rating: parseInt(rating)
     };
 
-    fetch("/feedbacks", {
-        method: "POST",
+    const response = await fetch('/feedbacks', {
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json"
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(result => {
-        console.log("Feedback submitted:", result);
-        // Optional: clear form
-        this.reset();
-        // Optional: reload admin feedbacks if admin page is open
-        if (window.location.pathname === "/admin") {
-            fetchFeedbacks();
-        }
-    })
-    .catch(error => console.error("Error submitting feedback:", error));
+        body: JSON.stringify(feedback)
+    });
+
+    if (response.ok) {
+        alert('Feedback submitted successfully');
+        document.getElementById('feedback-form').reset();
+    } else {
+        alert('Failed to submit feedback');
+    }
 });

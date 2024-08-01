@@ -42,4 +42,3 @@ function deleteFeedback(id) {
     })
     .catch(error => console.error("Error deleting feedback:", error));
 }
-

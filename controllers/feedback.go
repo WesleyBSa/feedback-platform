@@ -49,21 +49,30 @@ func GenerateReport(c echo.Context) error {
 	}
 
 	pdf := gofpdf.New("P", "mm", "A4", "")
-	pdf.AddPage()
-	pdf.SetFont("Arial", "B", 16)
-	pdf.Cell(40, 10, "Feedback Report")
-	pdf.Ln(12)
-	pdf.SetFont("Arial", "", 12)
 
+	// Adicione uma página
+	pdf.AddPage()
+
+	// Defina a fonte
+	pdf.SetFont("Arial", "", 12) // Usando uma fonte padrão para testes
+
+	// Adicione um título
+	pdf.SetFont("Arial", "B", 16)
+	pdf.Cell(0, 10, "Feedback Report")
+	pdf.Ln(12)
+
+	// Adicione os feedbacks
+	pdf.SetFont("Arial", "", 12)
 	for _, feedback := range feedbacks {
-		pdf.Cell(40, 10, "User: "+feedback.User)
+		pdf.Cell(0, 10, "User: "+feedback.User)
 		pdf.Ln(6)
-		pdf.Cell(40, 10, "Rating: "+strconv.Itoa(feedback.Rating)) // Use strconv.Itoa to convert the integer to string
+		pdf.Cell(0, 10, "Rating: "+strconv.Itoa(feedback.Rating))
 		pdf.Ln(6)
-		pdf.MultiCell(0, 10, "Content: "+feedback.Content, "", "", false)
+		pdf.MultiCell(0, 10, "Content: "+feedback.Content, "", "L", false)
 		pdf.Ln(6)
 	}
 
+	// Salve o arquivo PDF
 	filePath := "feedback_report.pdf"
 	err := pdf.OutputFileAndClose(filePath)
 	if err != nil {
