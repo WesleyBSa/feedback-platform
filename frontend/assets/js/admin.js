@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
-    fetchFeedbacks();
-    
+    fetchFeedbacks(); // Carrega feedbacks ao inicializar a página
+
     document.getElementById("generate-report").addEventListener("click", function() {
         fetch("/admin/report")
             .then(response => response.blob())
@@ -16,10 +16,16 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .catch(error => console.error("Error generating report:", error));
     });
+
+    // Adiciona evento para o filtro
+    document.getElementById("rating-filter").addEventListener("change", function() {
+        fetchFeedbacks(this.value); // Passa o valor do filtro para a função
+    });
 });
 
-function fetchFeedbacks() {
-    fetch("/admin/feedbacks")
+function fetchFeedbacks(rating = '') {
+    const url = rating ? `/admin/feedbacks?rating=${rating}` : '/admin/feedbacks';
+    fetch(url)
         .then(response => response.json())
         .then(feedbacks => {
             const feedbackList = document.getElementById("feedback-list");
@@ -38,7 +44,7 @@ function deleteFeedback(id) {
         method: "DELETE"
     })
     .then(() => {
-        fetchFeedbacks();  // Atualize a lista de feedbacks após a exclusão
+        fetchFeedbacks(); // Atualiza a lista de feedbacks após a exclusão
     })
     .catch(error => console.error("Error deleting feedback:", error));
 }

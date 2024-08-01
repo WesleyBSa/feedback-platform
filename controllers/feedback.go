@@ -2,11 +2,13 @@ package controllers
 
 import (
 	"feedback-platform/models"
+	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/jung-kurt/gofpdf"
 	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
 )
 
 // CreateFeedback creates a new feedback entry
@@ -23,10 +25,25 @@ func CreateFeedback(c echo.Context) error {
 	return c.JSON(http.StatusCreated, feedback)
 }
 
-// GetFeedbacks retrieves all feedback entries
+// GetFeedbacks retrieves all feedback entries with optional rating filter
 func GetFeedbacks(c echo.Context) error {
+	rating := c.QueryParam("rating")
+
+	// Log the rating parameter for debugging
+	fmt.Println("Received rating filter:", rating)
+
 	var feedbacks []models.Feedback
-	if result := models.DB.Find(&feedbacks); result.Error != nil {
+	var result *gorm.DB
+	if rating != "" {
+		r, err := strconv.Atoi(rating)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, "Invalid rating")
+		}
+		result = models.DB.Where("rating = ?", r).Find(&feedbacks)
+	} else {
+		result = models.DB.Find(&feedbacks)
+	}
+	if result.Error != nil {
 		return c.JSON(http.StatusInternalServerError, result.Error.Error())
 	}
 	return c.JSON(http.StatusOK, feedbacks)
@@ -49,30 +66,20 @@ func GenerateReport(c echo.Context) error {
 	}
 
 	pdf := gofpdf.New("P", "mm", "A4", "")
-
-	// Adicione uma página
 	pdf.AddPage()
-
-	// Defina a fonte
-	pdf.SetFont("Arial", "", 12) // Usando uma fonte padrão para testes
-
-	// Adicione um título
-	pdf.SetFont("Arial", "B", 16)
+	pdf.SetFont("Arial", "", 12)
 	pdf.Cell(0, 10, "Feedback Report")
 	pdf.Ln(12)
 
-	// Adicione os feedbacks
-	pdf.SetFont("Arial", "", 12)
 	for _, feedback := range feedbacks {
 		pdf.Cell(0, 10, "User: "+feedback.User)
 		pdf.Ln(6)
 		pdf.Cell(0, 10, "Rating: "+strconv.Itoa(feedback.Rating))
 		pdf.Ln(6)
-		pdf.MultiCell(0, 10, "Content: "+feedback.Content, "", "L", false)
+		pdf.MultiCell(0, 10, "Content: "+feedback.Content, "", "", false)
 		pdf.Ln(6)
 	}
 
-	// Salve o arquivo PDF
 	filePath := "feedback_report.pdf"
 	err := pdf.OutputFileAndClose(filePath)
 	if err != nil {
