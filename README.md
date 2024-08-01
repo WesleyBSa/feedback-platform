@@ -53,7 +53,7 @@
 │   │   │   └── styles.css
 │   │   └── js
 │   │       ├── admin.js
-│   │       └── feedback.js
+│   │       └── script.js
 │   ├── admin.html
 │   └── index.html
 ├── models
