@@ -1,25 +1,10 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", () => {
     fetchFeedbacks(); // Carrega feedbacks ao inicializar a página
 
-    document.getElementById("generate-report").addEventListener("click", function() {
-        fetch("/admin/report")
-            .then(response => response.blob())
-            .then(blob => {
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.style.display = "none";
-                a.href = url;
-                a.download = "feedback_report.pdf";
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-            })
-            .catch(error => console.error("Error generating report:", error));
-    });
+    document.getElementById("generate-report").addEventListener("click", generateReport);
 
-    // Adiciona evento para o filtro
-    document.getElementById("rating-filter").addEventListener("change", function() {
-        fetchFeedbacks(this.value); // Passa o valor do filtro para a função
+    document.getElementById("rating-filter").addEventListener("change", (e) => {
+        fetchFeedbacks(e.target.value); // Passa o valor do filtro para a função
     });
 });
 
@@ -40,11 +25,23 @@ function fetchFeedbacks(rating = '') {
 }
 
 function deleteFeedback(id) {
-    fetch(`/admin/feedbacks/${id}`, {
-        method: "DELETE"
-    })
-    .then(() => {
-        fetchFeedbacks(); // Atualiza a lista de feedbacks após a exclusão
-    })
-    .catch(error => console.error("Error deleting feedback:", error));
+    fetch(`/admin/feedbacks/${id}`, { method: "DELETE" })
+        .then(() => fetchFeedbacks()) // Atualiza a lista de feedbacks após a exclusão
+        .catch(error => console.error("Error deleting feedback:", error));
+}
+
+function generateReport() {
+    fetch("/admin/report")
+        .then(response => response.blob())
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.style.display = "none";
+            a.href = url;
+            a.download = "feedback_report.pdf";
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        })
+        .catch(error => console.error("Error generating report:", error));
 }
